@@ -1,6 +1,6 @@
 package com.balasamajam.services;
 
-import com.balasamajam.entities.Admin;
+import com.balasamajam.entities.User;
 import com.balasamajam.entities.Login;
 import com.balasamajam.models.UserCredentials;
 import com.balasamajam.repositories.AdminRepository;
@@ -23,14 +23,14 @@ public class LoginService {
 
     public String login(UserCredentials userCredentials)
     {
-        Admin admin = adminRepository.findByUsername(userCredentials.getUsername());
+        User user = adminRepository.findByUsername(userCredentials.getUsername());
 
-        if(admin != null && admin.getPassword().equals(userCredentials.getPassword()))
+        if(user != null && user.getPassword().equals(userCredentials.getPassword()))
         {
-            String token = UUID.nameUUIDFromBytes(admin.getUsername().getBytes()).toString();
+            String token = UUID.nameUUIDFromBytes(user.getUsername().getBytes()).toString();
 
             Date utcTime = Date.from(Instant.now());
-            Login login = new Login(utcTime, token, true, admin);
+            Login login = new Login(utcTime, token, true, user);
 
             loginRepository.save(login);
 

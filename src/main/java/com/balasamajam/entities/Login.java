@@ -21,15 +21,15 @@ public class Login {
 
     @OneToOne
     @JoinColumn(name = "admin_id")
-    private Admin admin;
+    private User user;
 
     public Login() {}
 
-    public Login(Date lastLoggedIn, String token, Boolean isActive, Admin admin) {
+    public Login(Date lastLoggedIn, String token, Boolean isActive, User user) {
         this.lastLoggedIn = lastLoggedIn;
         this.token = token;
         this.isActive = isActive;
-        this.admin = admin;
+        this.user = user;
     }
 
     public Date getLastLoggedIn() {
@@ -56,8 +56,8 @@ public class Login {
         isActive = active;
     }
 
-    public Admin getAdmin() {
-        return admin;
+    public User getAdmin() {
+        return user;
     }
 
     @PrePersist

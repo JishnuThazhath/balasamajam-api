@@ -1,6 +1,6 @@
 package com.balasamajam;
 
-import com.balasamajam.entities.Admin;
+import com.balasamajam.entities.User;
 import com.balasamajam.models.LoginResponse;
 import com.balasamajam.models.Output;
 import com.balasamajam.models.UserCredentials;
@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class BalasamajamController
+public class BalasamajamAdminController
 {
 
     @Autowired
@@ -22,9 +22,9 @@ public class BalasamajamController
     LoginService loginService;
 
     @PostMapping("/admin")
-    public ResponseEntity<String> addAdmin(@RequestBody Admin admin)
+    public ResponseEntity<String> addAdmin(@RequestBody User user)
     {
-        adminService.save(admin);
+        adminService.save(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
     }
