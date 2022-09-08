@@ -4,10 +4,10 @@ import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class User {
+public class Admin {
     @Id
     @Column(name = "uuid", nullable = false)
-    private UUID uuid = UUID.randomUUID();
+    private UUID uuid;
 
     private String firstName;
 
@@ -21,9 +21,9 @@ public class User {
 
     private String password;
 
-    protected User() {}
+    protected Admin() {}
 
-    public User(UUID id, String firstName, String lastName, String address, String phone) {
+    public Admin(UUID id, String firstName, String lastName, String address, String phone) {
         this.uuid = id;
         this.firstName = firstName;
         this.lastName = lastName;

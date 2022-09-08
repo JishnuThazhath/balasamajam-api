@@ -20,13 +20,13 @@ public class MemberPaymentHistory
 
     @ManyToOne
     @JoinColumn(name = "collected_by")
-    private User collectedBy;
+    private Admin collectedBy;
 
     private PaymentType paymentType;
 
     private Float amount;
 
-    public User getCollectedBy() {
+    public Admin getCollectedBy() {
         return collectedBy;
     }
 
@@ -54,7 +54,7 @@ public class MemberPaymentHistory
         this.paidBy = paidBy;
     }
 
-    public void setCollectedBy(User collectedBy) {
+    public void setCollectedBy(Admin collectedBy) {
         this.collectedBy = collectedBy;
     }
 

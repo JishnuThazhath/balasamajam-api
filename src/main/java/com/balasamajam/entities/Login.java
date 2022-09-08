@@ -20,16 +20,16 @@ public class Login {
     Boolean isActive;
 
     @OneToOne
-    @JoinColumn(name = "admin_id")
-    private User user;
+    @JoinColumn(name = "user_id")
+    private Admin admin;
 
     public Login() {}
 
-    public Login(Date lastLoggedIn, String token, Boolean isActive, User user) {
+    public Login(Date lastLoggedIn, String token, Boolean isActive, Admin admin) {
         this.lastLoggedIn = lastLoggedIn;
         this.token = token;
         this.isActive = isActive;
-        this.user = user;
+        this.admin = admin;
     }
 
     public Date getLastLoggedIn() {
@@ -56,8 +56,8 @@ public class Login {
         isActive = active;
     }
 
-    public User getAdmin() {
-        return user;
+    public Admin getAdmin() {
+        return admin;
     }
 
     @PrePersist

@@ -1,6 +1,6 @@
 package com.balasamajam;
 
-import com.balasamajam.entities.User;
+import com.balasamajam.entities.Admin;
 import com.balasamajam.models.LoginResponse;
 import com.balasamajam.models.Output;
 import com.balasamajam.models.UserCredentials;
@@ -21,23 +21,42 @@ public class BalasamajamAdminController
     @Autowired
     LoginService loginService;
 
-    @PostMapping("/admin")
-    public ResponseEntity<String> addAdmin(@RequestBody User user)
+    @GetMapping("/healthCheck")
+    public ResponseEntity<String> healthCheck()
     {
-        adminService.save(user);
+        return ResponseEntity.ok("OK");
+    }
 
-        return ResponseEntity.status(HttpStatus.OK).body(HttpStatus.OK.toString());
+    @PostMapping("/admin")
+    public ResponseEntity<String> addAdmin(@RequestBody Admin admin)
+    {
+        adminService.save(admin);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(HttpStatus.CREATED.toString());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Output> login(@RequestBody UserCredentials userCredentials) {
+    public ResponseEntity<Output> login(@RequestBody UserCredentials userCredentials)
+    {
         String token = loginService.login(userCredentials);
-
+        System.out.println("username > " + userCredentials.getUsername());
+        System.out.println("password > " + userCredentials.getPassword());
         if(token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Output("Failed"));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(new LoginResponse(token));
+        LoginResponse loginResponse = new LoginResponse(token, "Successfull");
+
+        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+    }
+
+    @GetMapping("/logout/{token}")
+    public ResponseEntity<Boolean> logout(@PathVariable String token)
+    {
+        System.out.println("Logout request received");
+        boolean isLoggedOut = loginService.logout(token);
+
+        return ResponseEntity.ok(isLoggedOut);
     }
 
     @GetMapping("/validate/{token}")
@@ -51,14 +70,12 @@ public class BalasamajamAdminController
             {
                 return ResponseEntity.ok(true);
             }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-            }
+
         }
         catch (Exception e)
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+          e.printStackTrace();
         }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
     }
 }

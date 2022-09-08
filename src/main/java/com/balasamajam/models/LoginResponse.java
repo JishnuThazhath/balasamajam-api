@@ -1,10 +1,11 @@
 package com.balasamajam.models;
 
-public class LoginResponse implements Output {
+public class LoginResponse extends Output {
     private String token;
 
-    public LoginResponse(String token) {
+    public LoginResponse(String token, String status) {
         this.token = token;
+        this.status = status;
     }
 
     public String getToken() {
