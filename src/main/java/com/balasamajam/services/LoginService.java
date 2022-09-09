@@ -3,16 +3,13 @@ package com.balasamajam.services;
 import com.balasamajam.entities.Admin;
 import com.balasamajam.entities.Login;
 import com.balasamajam.jwt.JwtTokenUtil;
-import com.balasamajam.models.LoginResponse;
-import com.balasamajam.models.UserCredentials;
+import com.balasamajam.models.LoginRequestModel;
+import com.balasamajam.models.LoginResponseModel;
+import com.balasamajam.models.Output;
 import com.balasamajam.repositories.AdminRepository;
 import com.balasamajam.repositories.LoginRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class LoginService {
@@ -26,53 +23,36 @@ public class LoginService {
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-    public String login(UserCredentials userCredentials)
+    public LoginResponseModel login(LoginRequestModel loginRequestModel)
     {
+        LoginResponseModel loginResponseModel;
         try
         {
-            Admin admin = adminRepository.findByUsername(userCredentials.getUsername());
+            Admin admin = adminRepository.findByUsername(loginRequestModel.getUsername());
 
-            if(admin != null && admin.getPassword().equals(userCredentials.getPassword()))
+            if(admin != null && admin.getPassword().equals(loginRequestModel.getPassword()))
             {
                 String token = jwtTokenUtil.doGenerateToken(admin.getUsername());
-
-//                Date utcTime = Date.from(Instant.now());
-//                Login login = new Login(utcTime, token, true, admin);
-
-//                loginRepository.save(login);
-
-                return token;
+                loginResponseModel = new LoginResponseModel(token, "OK", "Login Successfull");
+            }
+            else
+            {
+                loginResponseModel = new LoginResponseModel(null, "FAILED", "Username or Password is Incorrect");
             }
         }
         catch (Exception e)
         {
             e.printStackTrace();
+            loginResponseModel = new LoginResponseModel(null, "ERROR", "Login Failed");
         }
-        return null;
+        return loginResponseModel;
     }
 
-    public boolean logout(String token) {
-        try
-        {
-            Login login = loginRepository.findByToken(token);
-            if(login == null)
-            {
-                System.out.println("User is not logged in.");
-            }
-            else
-            {
-                loginRepository.delete(login);
-            }
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+    public Output logout(String token) {
+        return new Output("OK", "Nothing todo here. Remove token from client cache");
     }
 
     public boolean validateLogin(String token) {
-//        Login login = loginRepository.findByToken(token);
-//        return login != null;
         return jwtTokenUtil.isValidToken(token);
     }
 }

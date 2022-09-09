@@ -17,6 +17,11 @@ public class JwtTokenUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    // what is the difference between the token generated for the same user?
+    // we use time stamp. what happens a user token is created at the exact same time ?
+    // one potential solution is to create a uuid and add it as a claim attribute.
+    // since the uuid is random, the jwt token will always be uniquie.
+    // but this requires we must store the uuid in the server. which again defeats the jwt purpose. Think!
     public String doGenerateToken(String username)
     {
         System.out.println("Generating token");

@@ -1,10 +1,10 @@
 package com.balasamajam.models;
 
-public class UserCredentials {
+public class LoginRequestModel {
     private String username;
     private String password;
 
-    public UserCredentials(String username, String password) {
+    public LoginRequestModel(String username, String password) {
         this.username = username;
         this.password = password;
     }

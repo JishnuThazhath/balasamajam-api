@@ -1,9 +1,8 @@
 package com.balasamajam;
 
 import com.balasamajam.entities.Admin;
-import com.balasamajam.models.LoginResponse;
 import com.balasamajam.models.Output;
-import com.balasamajam.models.UserCredentials;
+import com.balasamajam.models.LoginRequestModel;
 import com.balasamajam.services.AdminService;
 import com.balasamajam.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,27 +35,18 @@ public class BalasamajamAdminController
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Output> login(@RequestBody UserCredentials userCredentials)
+    public ResponseEntity<Output> login(@RequestBody LoginRequestModel loginRequestModel)
     {
-        String token = loginService.login(userCredentials);
-        System.out.println("username > " + userCredentials.getUsername());
-        System.out.println("password > " + userCredentials.getPassword());
-        if(token == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new Output("Failed"));
-        }
-
-        LoginResponse loginResponse = new LoginResponse(token, "Successfull");
-
-        return ResponseEntity.status(HttpStatus.OK).body(loginResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(loginService.login(loginRequestModel));
     }
 
     @GetMapping("/logout/{token}")
-    public ResponseEntity<Boolean> logout(@PathVariable String token)
+    public ResponseEntity<Output> logout(@PathVariable String token)
     {
         System.out.println("Logout request received");
-        boolean isLoggedOut = loginService.logout(token);
-
-        return ResponseEntity.ok(isLoggedOut);
+        // one another wat to do is to set a claim attribure that says if logged out or not.
+        // based on that binary attribute we could decide if the user is logged out or not.
+        return ResponseEntity.status(HttpStatus.OK).body(loginService.logout(token));
     }
 
     @GetMapping("/validate/{token}")
