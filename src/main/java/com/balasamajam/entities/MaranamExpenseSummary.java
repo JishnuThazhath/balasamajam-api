@@ -5,7 +5,8 @@ import com.balasamajam.constants.ExpenseType;
 import javax.persistence.*;
 
 @Entity
-public class MaranamExpenseSummary {
+public class MaranamExpenseSummary
+{
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
@@ -16,15 +17,18 @@ public class MaranamExpenseSummary {
 
     private ExpenseType expenseType;
 
-    public Maranam getMaranam() {
+    public Maranam getMaranam()
+    {
         return maranam;
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 }

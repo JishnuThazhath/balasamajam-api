@@ -1,14 +1,17 @@
 package com.balasamajam.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 public class Maranam
 {
     @Id
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     private String name;
 
@@ -22,11 +25,11 @@ public class Maranam
 
     private String note;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -68,5 +71,12 @@ public class Maranam
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    @PrePersist
+    private void onCreate() {
+        String combo = getName() + getDateOfDeath();
+        byte [] comboBytes = combo.getBytes();
+        setId(UUID.nameUUIDFromBytes(comboBytes));
     }
 }

@@ -1,29 +1,38 @@
 package com.balasamajam.entities;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
-public class OtherExpense {
+public class OtherExpense
+{
     @Id
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", nullable = false)
-    private Long id;
+    private UUID id;
 
     private String description;
 
     private Timestamp dateOfExpense;
 
-    private String amount;
+    private Float amount;
 
     private String note;
 
-    public Long getId() {
+    public UUID getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id)
+    {
         this.id = id;
     }
 
@@ -43,11 +52,11 @@ public class OtherExpense {
         this.dateOfExpense = dateOfExpense;
     }
 
-    public String getAmount() {
+    public Float getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(Float amount) {
         this.amount = amount;
     }
 

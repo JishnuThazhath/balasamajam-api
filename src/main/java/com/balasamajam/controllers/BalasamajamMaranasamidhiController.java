@@ -1,4 +1,4 @@
-package com.balasamajam;
+package com.balasamajam.controllers;
 
 import com.balasamajam.entities.MemberPaymentHistory;
 import com.balasamajam.services.MaranasamidhiPirivuDetailsService;

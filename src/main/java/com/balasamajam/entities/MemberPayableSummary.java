@@ -6,7 +6,8 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-public class MemberPayableSummary {
+public class MemberPayableSummary
+{
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
@@ -21,43 +22,53 @@ public class MemberPayableSummary {
 
     private Float amount;
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
 
-    public Timestamp getPaymentAddedOn() {
+    public Timestamp getPaymentAddedOn()
+    {
         return paymentAddedOn;
     }
 
-    public void setPaymentAddedOn(Timestamp paymentAddedOn) {
+    public void setPaymentAddedOn(Timestamp paymentAddedOn)
+    {
         this.paymentAddedOn = paymentAddedOn;
     }
 
-    public Member getMember() {
+    public Member getMember()
+    {
         return member;
     }
 
-    public void setMember(Member member) {
+    public void setMember(Member member)
+    {
         this.member = member;
     }
 
-    public PaymentType getPaymentType() {
+    public PaymentType getPaymentType()
+    {
         return paymentType;
     }
 
-    public void setPaymentType(PaymentType paymentType) {
+    public void setPaymentType(PaymentType paymentType)
+    {
         this.paymentType = paymentType;
     }
 
-    public Float getAmount() {
+    public Float getAmount()
+    {
         return amount;
     }
 
-    public void setAmount(Float amount) {
+    public void setAmount(Float amount)
+    {
         this.amount = amount;
     }
 }

@@ -1,4 +1,4 @@
-package com.balasamajam;
+package com.balasamajam.controllers;
 
 import com.balasamajam.entities.Admin;
 import com.balasamajam.models.Output;
