@@ -10,6 +10,7 @@ public class MemberPayableSummary
 {
     @Id
     @Column(name = "id", nullable = false)
+    @GeneratedValue
     private Long id;
 
     private Timestamp paymentAddedOn;
