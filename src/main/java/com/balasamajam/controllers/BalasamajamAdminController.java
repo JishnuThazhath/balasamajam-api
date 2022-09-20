@@ -1,8 +1,10 @@
 package com.balasamajam.controllers;
 
 import com.balasamajam.entities.Admin;
+import com.balasamajam.models.LoginResponseModel;
 import com.balasamajam.models.Output;
 import com.balasamajam.models.LoginRequestModel;
+import com.balasamajam.models.ResponseBaseModel;
 import com.balasamajam.services.AdminService;
 import com.balasamajam.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class BalasamajamAdminController
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Output> login(@RequestBody LoginRequestModel loginRequestModel)
+    public ResponseEntity<ResponseBaseModel<LoginResponseModel>> login(@RequestBody LoginRequestModel loginRequestModel)
     {
         return ResponseEntity.status(HttpStatus.OK).body(loginService.login(loginRequestModel));
     }
