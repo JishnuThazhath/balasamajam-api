@@ -1,11 +1,9 @@
 package com.balasamajam.services;
 
 import com.balasamajam.entities.Admin;
-import com.balasamajam.entities.Login;
 import com.balasamajam.jwt.JwtTokenUtil;
 import com.balasamajam.models.LoginRequestModel;
 import com.balasamajam.models.LoginResponseModel;
-import com.balasamajam.models.Output;
 import com.balasamajam.models.ResponseBaseModel;
 import com.balasamajam.repositories.AdminRepository;
 import com.balasamajam.repositories.LoginRepository;
@@ -65,9 +63,5 @@ public class LoginService {
 
     public boolean validateLogin(String token) {
         return jwtTokenUtil.isValidToken(token);
-    }
-
-    public Output logout(String token) {
-        return new Output("OK", "Nothing todo here. Remove token from client cache");
     }
 }

@@ -2,9 +2,7 @@ package com.balasamajam.models;
 
 public class MemberRequestModel
 {
-    private String firstName;
-
-    private String lastName;
+    private String fullName;
 
     private String address;
 
@@ -12,21 +10,16 @@ public class MemberRequestModel
 
     private String email;
 
-    public String getFirstName() {
-        return firstName;
+    private String localizedFullName;
+
+    public String getFullName() {
+        return fullName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getAddress() {
         return address;
@@ -50,5 +43,13 @@ public class MemberRequestModel
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getLocalizedFullName() {
+        return localizedFullName;
+    }
+
+    public void setLocalizedFullName(String localizedFullName) {
+        this.localizedFullName = localizedFullName;
     }
 }

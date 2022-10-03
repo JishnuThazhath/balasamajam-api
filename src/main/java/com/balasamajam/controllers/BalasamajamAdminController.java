@@ -2,7 +2,6 @@ package com.balasamajam.controllers;
 
 import com.balasamajam.entities.Admin;
 import com.balasamajam.models.LoginResponseModel;
-import com.balasamajam.models.Output;
 import com.balasamajam.models.LoginRequestModel;
 import com.balasamajam.models.ResponseBaseModel;
 import com.balasamajam.services.AdminService;
@@ -40,15 +39,6 @@ public class BalasamajamAdminController
     public ResponseEntity<ResponseBaseModel<LoginResponseModel>> login(@RequestBody LoginRequestModel loginRequestModel)
     {
         return ResponseEntity.status(HttpStatus.OK).body(loginService.login(loginRequestModel));
-    }
-
-    @GetMapping("/logout/{token}")
-    public ResponseEntity<Output> logout(@PathVariable String token)
-    {
-        System.out.println("Logout request received");
-        // one another wat to do is to set a claim attribure that says if logged out or not.
-        // based on that binary attribute we could decide if the user is logged out or not.
-        return ResponseEntity.status(HttpStatus.OK).body(loginService.logout(token));
     }
 
     @GetMapping("/validate/{token}")
