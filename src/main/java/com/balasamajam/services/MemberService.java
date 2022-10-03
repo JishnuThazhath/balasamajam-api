@@ -1,23 +1,20 @@
 package com.balasamajam.services;
 
 import com.balasamajam.entities.Member;
-import com.balasamajam.models.MemberRequestModel;
-import com.balasamajam.models.MemberResponseModel;
-import com.balasamajam.models.ResponseBaseModel;
+import com.balasamajam.models.*;
 import com.balasamajam.repositories.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MemberService
 {
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private TransactionTemplate transactionTemplate;
 
 
     public ResponseBaseModel<MemberResponseModel> addMember(MemberRequestModel memberRequestModel) {
@@ -50,5 +47,41 @@ public class MemberService
         }
 
         return memberResponseModel;
+    }
+
+    public ResponseBaseModel<List<SearchMemberResponseModel>> fetchMembers(SearchMemberRequestModel searchMemberRequestModel)
+    {
+        ResponseBaseModel<List<SearchMemberResponseModel>> searchMemberResponseModels = new ResponseBaseModel<>();
+        searchMemberResponseModels.setStatus("OK");
+        searchMemberResponseModels.setMessage("Successfully fetched member details");
+
+        try
+        {
+            List<SearchMemberResponseModel> searchMemberResponseModelList = new ArrayList<>();
+
+            List<Member> members = memberRepository.findMembers(searchMemberRequestModel.getSearchText().toLowerCase());
+
+            for(Member member : members)
+            {
+                SearchMemberResponseModel searchMemberResponseModel = new SearchMemberResponseModel();
+                searchMemberResponseModel.setMemberFullName(member.getFullName());
+                searchMemberResponseModel.setMemberLocalName(member.getLocalizedFullName());
+                searchMemberResponseModel.setMaranavari(member.getMaranavari());
+                searchMemberResponseModel.setMasavari(member.getMasavari());
+                searchMemberResponseModel.setTotal(member.getTotal());
+
+                searchMemberResponseModelList.add(searchMemberResponseModel);
+            }
+
+            searchMemberResponseModels.setData(searchMemberResponseModelList);
+        }
+        catch (Exception e)
+        {
+            searchMemberResponseModels.setStatus("ERROR");
+            searchMemberResponseModels.setMessage("Error while fetching member details");
+            e.printStackTrace();
+        }
+
+        return searchMemberResponseModels;
     }
 }
