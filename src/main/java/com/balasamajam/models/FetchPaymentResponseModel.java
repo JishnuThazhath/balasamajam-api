@@ -18,6 +18,9 @@ public class FetchPaymentResponseModel
 
     private double amount;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private Date paymentDate;
+
     public Date getStartDate() {
         return startDate;
     }
@@ -56,5 +59,13 @@ public class FetchPaymentResponseModel
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public Date getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(Date paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }

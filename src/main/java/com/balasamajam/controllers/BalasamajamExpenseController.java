@@ -22,7 +22,7 @@ public class BalasamajamExpenseController
         return ResponseEntity.ok(expenseService.addExpense(addExpenseRequestModel.getData()));
     }
 
-    @PostMapping("/fetchExpense")
+    @PostMapping("/fetchExpenses")
     public ResponseEntity<ResponseBaseModel<List<FetchExpenseResponseModel>>> fetchExpense(@RequestBody RequestBaseModel<FetchExpenseRequestModel> fetchExpenseRequestModel)
     {
         return ResponseEntity.ok(expenseService.fetchExpenses(fetchExpenseRequestModel.getData()));

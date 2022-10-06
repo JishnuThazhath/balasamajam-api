@@ -69,6 +69,7 @@ public class MemberService
                 searchMemberResponseModel.setMaranavari(member.getMaranavari());
                 searchMemberResponseModel.setMasavari(member.getMasavari());
                 searchMemberResponseModel.setTotal(member.getTotal());
+                searchMemberResponseModel.setPhoneNumber(member.getPhone());
 
                 searchMemberResponseModelList.add(searchMemberResponseModel);
             }
@@ -83,5 +84,33 @@ public class MemberService
         }
 
         return searchMemberResponseModels;
+    }
+
+    public ResponseBaseModel<List<MemberBasicModel>> getAllMembers() {
+        ResponseBaseModel<List<MemberBasicModel>> memberBasicResponseModel = new ResponseBaseModel<>();
+        memberBasicResponseModel.setStatus("OK");
+        memberBasicResponseModel.setMessage("Succefully fetched all member basic details");
+
+        try {
+            List<MemberBasicModel> memberBasicModelList = new ArrayList<>();
+            List<Member> members = memberRepository.findAll();
+            for(Member member : members) {
+                MemberBasicModel memberBasicModel = new MemberBasicModel();
+                memberBasicModel.setMemberId(member.getUuid());
+                memberBasicModel.setMemberFullName(member.getFullName());
+
+                memberBasicModelList.add(memberBasicModel);
+            }
+
+            memberBasicResponseModel.setData(memberBasicModelList);
+        }
+        catch (Exception e)
+        {
+            memberBasicResponseModel.setStatus("ERROR");
+            memberBasicResponseModel.setMessage("Error occurred while fetching member basic info");
+            e.printStackTrace();
+        }
+
+        return  memberBasicResponseModel;
     }
 }

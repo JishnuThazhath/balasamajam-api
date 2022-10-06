@@ -12,6 +12,8 @@ public class SearchMemberResponseModel
 
     private double total;
 
+    private String phoneNumber;
+
     public String getMemberFullName() {
         return memberFullName;
     }
@@ -50,5 +52,13 @@ public class SearchMemberResponseModel
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

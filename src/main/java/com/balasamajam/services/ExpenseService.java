@@ -48,28 +48,32 @@ public class ExpenseService {
             String adminByIdString = addExpenseRequestModel.getAddedByAdminId();
             Timestamp dateOfDeath = new Timestamp(addExpenseRequestModel.getDateOfDeath().getTime());
 
-            if (memberIdString.isEmpty()) {
-                throw new InvalidRequestStateException("Invalid Member");
+            Member member = null;
+            Optional<Member> memberOptional;
+            if (memberIdString != null && !memberIdString.isEmpty()) {
+                memberOptional = memberRepository.findById(UUID.fromString(memberIdString));
+                if(!memberOptional.isEmpty())
+                {
+                    member = memberOptional.get();
+                }
             }
 
             if (adminByIdString.isEmpty()) {
                 throw new InvalidRequestStateException("Invalid Admin");
             }
 
-            Optional<Member> memberOptional = memberRepository.findById(UUID.fromString(memberIdString));
+
             Optional<Admin> adminOptional = adminRepository.findById(UUID.fromString(adminByIdString));
 
-            if (memberOptional.isEmpty() || adminOptional.isEmpty()) {
+            if (adminOptional.isEmpty()) {
                 addExpenseResponseModel.setStatus("FAILED");
                 addExpenseResponseModel.setMessage("No such member or invalid admin");
             } else {
                 Expense expense = new Expense();
 
-                Member member = memberOptional.get();
-
                 expense.setAmount(addExpenseRequestModel.getAmount());
                 expense.setDescription(addExpenseRequestModel.getDescription());
-                expense.setExpenseType(addExpenseRequestModel.getType());
+                expense.setExpenseType(addExpenseRequestModel.getExpenseType());
                 expense.setNotes(addExpenseRequestModel.getNotes());
                 expense.setRelationToMember(member);
                 expense.setAddedBy(adminOptional.get());
@@ -78,7 +82,7 @@ public class ExpenseService {
                 expenseRepository.save(expense);
 
                 // Only MARANAM expense type add 100 rs to all the members and logs in the transaction table.
-                if (addExpenseRequestModel.getType().equals(ExpenseType.MARANAM)) {
+                if (addExpenseRequestModel.getExpenseType().equals(ExpenseType.MARANAM)) {
                     List<Member> allMembers = memberRepository.findAll();
 
                     for (Member eachMem : allMembers) {
@@ -94,7 +98,7 @@ public class ExpenseService {
                                 addExpenseRequestModel.getAmount(), null, expense, TransactionType.MARANAVARI, eachMem.getTotal());
                     }
 
-                } else if(addExpenseRequestModel.getType().equals(ExpenseType.OTHERS)) {
+                } else if(addExpenseRequestModel.getExpenseType().equals(ExpenseType.OTHERS)) {
                     transactionLogService.addNewTransactionLog(new Timestamp(System.currentTimeMillis()), null,
                             addExpenseRequestModel.getAmount(), null, expense, TransactionType.OTHERS, 0);
                 }
@@ -112,19 +116,33 @@ public class ExpenseService {
     public ResponseBaseModel<List<FetchExpenseResponseModel>> fetchExpenses(FetchExpenseRequestModel fetchExpenseRequestModel) {
 
         ResponseBaseModel<List<FetchExpenseResponseModel>> listResponseBaseModel = new ResponseBaseModel<>();
+        listResponseBaseModel.setStatus("OK");
+        listResponseBaseModel.setMessage("Successfully fetched expense info");
 
         try
         {
             List<FetchExpenseResponseModel> fetchExpenseResponseModelList = new ArrayList<>();
 
-            List<Expense> expenses = expenseRepository.findAll();
+            List<Expense> expenses;
+            String expenseType = fetchExpenseRequestModel.getExpenseType();
+
+            if(expenseType.equals(ExpenseType.MARANAM.toString())
+                    || expenseType.equals(ExpenseType.OTHERS.toString()))
+            {
+                expenses = expenseRepository.findByExpenseType(ExpenseType.valueOf(expenseType));
+            }
+            else
+            {
+                expenses = expenseRepository.findAll();
+            }
+
             for(Expense expense : expenses)
             {
                 FetchExpenseResponseModel fetchExpenseResponseModel = new FetchExpenseResponseModel();
                 fetchExpenseResponseModel.setAmount(expense.getAmount());
                 fetchExpenseResponseModel.setAddedBy(expense.getAddedBy().getFirstName() + " " + expense.getAddedBy().getLastName());
                 fetchExpenseResponseModel.setDescription(expense.getDescription());
-                fetchExpenseResponseModel.setType(expense.getExpenseType());
+                fetchExpenseResponseModel.setExpenseType(expense.getExpenseType());
                 fetchExpenseResponseModel.setRelatedTo(expense.getRelationToMember().getFullName());
                 fetchExpenseResponseModel.setDate(expense.getDate());
 
@@ -135,6 +153,8 @@ public class ExpenseService {
         }
         catch (Exception e)
         {
+            listResponseBaseModel.setStatus("ERROR");
+            listResponseBaseModel.setStatus("Error occurred while fetching expense info");
             e.printStackTrace();
         }
 

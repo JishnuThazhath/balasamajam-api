@@ -1,10 +1,15 @@
 package com.balasamajam.models;
 
-import com.balasamajam.constants.ExpenseType;
-
-import java.util.Date;
 
 public class FetchExpenseRequestModel
 {
+    private String expenseType;
 
+    public String getExpenseType() {
+        return expenseType;
+    }
+
+    public void setExpenseType(String expenseType) {
+        this.expenseType = expenseType;
+    }
 }

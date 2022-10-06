@@ -5,6 +5,7 @@ import com.balasamajam.services.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,10 +25,16 @@ public class BalasamajamMemberController
         return ResponseEntity.ok(memberService.fetchMembers(searchMemberRequestModel.getData()));
     }
 
-    @PostMapping("/member/addMember")
+    @PostMapping("/addMember")
     public ResponseEntity<ResponseBaseModel<MemberResponseModel>> addMember(@RequestBody RequestBaseModel<MemberRequestModel> memberRequestModel)
     {
         System.out.print("Add member request received " + memberRequestModel.getData().getFullName());
         return ResponseEntity.status(HttpStatus.OK).body(memberService.addMember(memberRequestModel.getData()));
+    }
+
+    // pass token as query param to secure the communication
+    @GetMapping("/getAllMembers")
+    public ResponseEntity<ResponseBaseModel<List<MemberBasicModel>>> getAllMembers() {
+        return ResponseEntity.ok(memberService.getAllMembers());
     }
 }

@@ -1,10 +1,7 @@
 package com.balasamajam.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 public class FetchPaymentRequestModel
 {

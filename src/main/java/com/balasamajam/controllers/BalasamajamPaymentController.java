@@ -22,7 +22,7 @@ public class BalasamajamPaymentController
         return ResponseEntity.ok(paymentService.addNewPayment(addPaymentRequestModel.getData()));
     }
 
-    @PostMapping("/fetchPayment")
+    @PostMapping("/fetchPayments")
     public ResponseEntity<ResponseBaseModel<List<FetchPaymentResponseModel>>> fetchPayment(@RequestBody RequestBaseModel<FetchPaymentRequestModel> fetchPaymentRequestModel)
     {
         System.out.println(fetchPaymentRequestModel.getData().getDate());

@@ -150,6 +150,7 @@ public class PaymentService
                 fetchPaymentResponseModel.setMemberFullName(payment.getCollectedFrom().getFullName());
                 fetchPaymentResponseModel.setStartDate(startDate);
                 fetchPaymentResponseModel.setEndDate(endDate);
+                fetchPaymentResponseModel.setPaymentDate(payment.getPaymentDate());
 
                 fetchPaymentResponseModels.add(fetchPaymentResponseModel);
             }

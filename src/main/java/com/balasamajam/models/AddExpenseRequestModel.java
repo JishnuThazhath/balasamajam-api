@@ -21,7 +21,7 @@ public class AddExpenseRequestModel
 
     private String addedByAdminId;
 
-    private ExpenseType type;
+    private ExpenseType expenseType;
 
     public String getDescription() {
         return description;
@@ -71,11 +71,11 @@ public class AddExpenseRequestModel
         this.addedByAdminId = addedByAdminId;
     }
 
-    public ExpenseType getType() {
-        return type;
+    public ExpenseType getExpenseType() {
+        return expenseType;
     }
 
-    public void setType(ExpenseType type) {
-        this.type = type;
+    public void setExpenseType(ExpenseType expenseType) {
+        this.expenseType = expenseType;
     }
 }

@@ -42,6 +42,7 @@ public class LoginService {
                 loginResponse.setFirstName(admin.getFirstName());
                 loginResponse.setLastName(admin.getLastName());
                 loginResponse.setPhone(admin.getPhone());
+                loginResponse.setAdminId(admin.getUuid());
 
                 loginResponseModel.setData(loginResponse);
             }
