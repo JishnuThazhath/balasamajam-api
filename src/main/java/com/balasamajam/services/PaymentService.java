@@ -10,10 +10,14 @@ import com.balasamajam.repositories.PaymentRepository;
 import com.balasamajam.utils.DateSupportUtil;
 import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.*;
+
+import static com.balasamajam.specifications.PaymentSpecification.*;
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 public class PaymentService
@@ -126,9 +130,9 @@ public class PaymentService
         return addPaymentResponseModel;
     }
 
-    public ResponseBaseModel<List<FetchPaymentResponseModel>> fetchPayment(FetchPaymentRequestModel fetchPaymentRequestModel)
+    public ResponseBaseModel<List<PaymentModel>> fetchPayment(FetchPaymentRequestModel fetchPaymentRequestModel)
     {
-        ResponseBaseModel<List<FetchPaymentResponseModel>> listResponseBaseModel = new ResponseBaseModel<>();
+        ResponseBaseModel<List<PaymentModel>> listResponseBaseModel = new ResponseBaseModel<>();
         listResponseBaseModel.setStatus("OK");
         listResponseBaseModel.setMessage("Fetch payment details is successful");
 
@@ -139,23 +143,21 @@ public class PaymentService
 
             List<Payment> payments = paymentRepository.findByPaymentDateBetween(startDate, endDate);
 
-            List<FetchPaymentResponseModel> fetchPaymentResponseModels = new ArrayList<>();
+            List<PaymentModel> paymentModels = new ArrayList<>();
 
             for(Payment payment : payments)
             {
-                FetchPaymentResponseModel fetchPaymentResponseModel = new FetchPaymentResponseModel();
+                PaymentModel paymentModel = new PaymentModel();
 
-                fetchPaymentResponseModel.setAmount(payment.getPaymentAmount());
-                fetchPaymentResponseModel.setCollectedByFullName(payment.getCollectedBy().getFirstName() + " " + payment.getCollectedBy().getLastName());
-                fetchPaymentResponseModel.setMemberFullName(payment.getCollectedFrom().getFullName());
-                fetchPaymentResponseModel.setStartDate(startDate);
-                fetchPaymentResponseModel.setEndDate(endDate);
-                fetchPaymentResponseModel.setPaymentDate(payment.getPaymentDate());
+                paymentModel.setAmount(payment.getPaymentAmount());
+                paymentModel.setCollectedByFullName(payment.getCollectedBy().getFirstName() + " " + payment.getCollectedBy().getLastName());
+                paymentModel.setMemberFullName(payment.getCollectedFrom().getFullName());
+                paymentModel.setPaymentDate(payment.getPaymentDate());
 
-                fetchPaymentResponseModels.add(fetchPaymentResponseModel);
+                paymentModels.add(paymentModel);
             }
 
-            listResponseBaseModel.setData(fetchPaymentResponseModels);
+            listResponseBaseModel.setData(paymentModels);
         }
         catch (Exception e)
         {
@@ -165,5 +167,100 @@ public class PaymentService
         }
 
         return listResponseBaseModel;
+    }
+
+    public ResponseBaseModel<FetchPaymentResponseModel> fetchPayments(FetchPaymentRequestModel request)
+    {
+        ResponseBaseModel<FetchPaymentResponseModel> response = new ResponseBaseModel<>();
+        response.setStatus("OK");
+        response.setMessage("Successfully fetched collection summary info.");
+
+        try
+        {
+            Date startDate = DateSupportUtil.getStartDate(request.getDate());
+            Date endDate = DateSupportUtil.getEndDate(request.getDate());
+
+            System.out.println(" START DATE > " + startDate);
+            System.out.println(" END DATE > " + endDate);
+
+            Specification<Payment> paymentSpecification = where(paymentStartDate(startDate)).and(paymentEndDate(endDate));
+
+            String adminId = request.getAdminId();
+            if(adminId != null && !adminId.isEmpty())
+            {
+                Optional<Admin> adminOptional = adminRepository.findById(UUID.fromString(adminId));
+                if(adminOptional.isPresent())
+                {
+                    Admin admin = adminOptional.get();
+                    paymentSpecification.and(paymentCollectedBy(admin));
+
+                }
+                else
+                {
+                    response.setStatus("OK");
+                    response.setMessage("No such admin.");
+                }
+            }
+
+
+            String memberId = request.getMemberId();
+            if(memberId != null && !memberId.isEmpty())
+            {
+                Optional<Member> memberOptional = memberRepository.findById(UUID.fromString(memberId));
+                if(memberOptional.isPresent())
+                {
+                    Member member = memberOptional.get();
+                    paymentSpecification.and(paymentCollectedFrom(member));
+
+                }
+                else
+                {
+                    response.setStatus("OK");
+                    response.setMessage("No such admin.");
+                }
+            }
+
+            FetchPaymentResponseModel fetchPaymentResponseModel = new FetchPaymentResponseModel();
+
+            List<Payment> payments = paymentRepository.findAll(paymentSpecification);
+            List<PaymentModel> payementsList = generatePaymentsResponseObject(payments, startDate, endDate);
+
+            fetchPaymentResponseModel.setPayments(payementsList);
+            fetchPaymentResponseModel.setStartDate(startDate);
+            fetchPaymentResponseModel.setEndDate(endDate);
+
+            response.setData(fetchPaymentResponseModel);
+        }
+        catch (Exception e)
+        {
+            response.setStatus("ERROR");
+            response.setMessage("An error occurred while fetching collection summary info.");
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
+    private List<PaymentModel> generatePaymentsResponseObject(List<Payment> payments, Date startDate, Date endDate)
+    {
+        List<PaymentModel> paymentModels = new ArrayList<>();
+
+        for(Payment payment : payments)
+        {
+            PaymentModel paymentModel = new PaymentModel();
+
+            Admin collectedBy = payment.getCollectedBy();
+            paymentModel.setCollectedByFullName(collectedBy.getFirstName() + " " + collectedBy.getLastName());
+
+            Member collectedFrom = payment.getCollectedFrom();
+            paymentModel.setMemberFullName(collectedFrom.getFullName());
+
+            paymentModel.setPaymentDate(payment.getPaymentDate());
+            paymentModel.setAmount(payment.getPaymentAmount());
+
+            paymentModels.add(paymentModel);
+        }
+
+        return paymentModels;
     }
 }

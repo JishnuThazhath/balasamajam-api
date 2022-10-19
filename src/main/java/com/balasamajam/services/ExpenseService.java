@@ -143,7 +143,13 @@ public class ExpenseService {
                 fetchExpenseResponseModel.setAddedBy(expense.getAddedBy().getFirstName() + " " + expense.getAddedBy().getLastName());
                 fetchExpenseResponseModel.setDescription(expense.getDescription());
                 fetchExpenseResponseModel.setExpenseType(expense.getExpenseType());
-                fetchExpenseResponseModel.setRelatedTo(expense.getRelationToMember().getFullName());
+
+                Member member = expense.getRelationToMember();
+                if(member != null)
+                {
+                    fetchExpenseResponseModel.setRelatedTo(member.getFullName());
+                }
+
                 fetchExpenseResponseModel.setDate(expense.getDate());
 
                 fetchExpenseResponseModelList.add(fetchExpenseResponseModel);

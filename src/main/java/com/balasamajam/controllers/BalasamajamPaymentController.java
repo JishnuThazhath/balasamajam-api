@@ -23,9 +23,9 @@ public class BalasamajamPaymentController
     }
 
     @PostMapping("/fetchPayments")
-    public ResponseEntity<ResponseBaseModel<List<FetchPaymentResponseModel>>> fetchPayment(@RequestBody RequestBaseModel<FetchPaymentRequestModel> fetchPaymentRequestModel)
+    public ResponseEntity<ResponseBaseModel<FetchPaymentResponseModel>> fetchPayment(@RequestBody RequestBaseModel<FetchPaymentRequestModel> fetchPaymentRequestModel)
     {
         System.out.println(fetchPaymentRequestModel.getData().getDate());
-        return ResponseEntity.ok(paymentService.fetchPayment(fetchPaymentRequestModel.getData()));
+        return ResponseEntity.ok(paymentService.fetchPayments(fetchPaymentRequestModel.getData()));
     }
 }

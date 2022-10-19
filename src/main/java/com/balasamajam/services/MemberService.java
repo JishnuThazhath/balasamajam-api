@@ -59,7 +59,17 @@ public class MemberService
         {
             List<SearchMemberResponseModel> searchMemberResponseModelList = new ArrayList<>();
 
-            List<Member> members = memberRepository.findMembers(searchMemberRequestModel.getSearchText().toLowerCase());
+            String searchText = searchMemberRequestModel.getSearchText();
+
+            List<Member> members;
+            if(searchText == null)
+            {
+                members = memberRepository.findAll();
+            }
+            else
+            {
+                members = memberRepository.findMembers(searchText.toLowerCase());
+            }
 
             for(Member member : members)
             {
