@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    platform: linux/amd64
+    restart: unless-stopped
+    container_name: balasamajam-api
+    ports:
+      - "8080:8080"
+  database:
+    image: "postgres"
+    container_name: balasamajam-database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"

@@ -1,15 +1,15 @@
 package com.balasamajam.controllers;
 
 import com.balasamajam.entities.Admin;
-import com.balasamajam.models.LoginResponseModel;
-import com.balasamajam.models.LoginRequestModel;
-import com.balasamajam.models.ResponseBaseModel;
+import com.balasamajam.models.*;
 import com.balasamajam.services.AdminService;
 import com.balasamajam.services.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class BalasamajamAdminController
@@ -59,5 +59,10 @@ public class BalasamajamAdminController
           e.printStackTrace();
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    }
+
+    @GetMapping("/getAllAdmins")
+    public ResponseEntity<ResponseBaseModel<List<AdminBaseModel>>> getAllAdmins() {
+        return ResponseEntity.ok(adminService.getAllAdmins());
     }
 }

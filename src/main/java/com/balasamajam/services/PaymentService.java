@@ -185,7 +185,8 @@ public class PaymentService
 
             Specification<Payment> paymentSpecification = where(paymentStartDate(startDate)).and(paymentEndDate(endDate));
 
-            String adminId = request.getAdminId();
+            String adminId = request.getCollectedById();
+            System.out.println("Admin Id " + adminId);
             if(adminId != null && !adminId.isEmpty())
             {
                 Optional<Admin> adminOptional = adminRepository.findById(UUID.fromString(adminId));
@@ -204,6 +205,7 @@ public class PaymentService
 
 
             String memberId = request.getMemberId();
+            System.out.println("Member Id " + memberId);
             if(memberId != null && !memberId.isEmpty())
             {
                 Optional<Member> memberOptional = memberRepository.findById(UUID.fromString(memberId));
