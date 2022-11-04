@@ -193,13 +193,9 @@ public class PaymentService
                 if(adminOptional.isPresent())
                 {
                     Admin admin = adminOptional.get();
-                    paymentSpecification.and(paymentCollectedBy(admin));
+                    System.out.println("Adding admin specification for admin " + admin.getFirstName());
+                    paymentSpecification = paymentSpecification.and(paymentCollectedBy(admin));
 
-                }
-                else
-                {
-                    response.setStatus("OK");
-                    response.setMessage("No such admin.");
                 }
             }
 
@@ -212,13 +208,9 @@ public class PaymentService
                 if(memberOptional.isPresent())
                 {
                     Member member = memberOptional.get();
-                    paymentSpecification.and(paymentCollectedFrom(member));
+                    System.out.println("Adding member specification for " + member.getFullName());
+                    paymentSpecification = paymentSpecification.and(paymentCollectedFrom(member));
 
-                }
-                else
-                {
-                    response.setStatus("OK");
-                    response.setMessage("No such admin.");
                 }
             }
 
