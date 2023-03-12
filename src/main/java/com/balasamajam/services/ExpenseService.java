@@ -52,7 +52,7 @@ public class ExpenseService {
             Optional<Member> memberOptional;
             if (memberIdString != null && !memberIdString.isEmpty()) {
                 memberOptional = memberRepository.findById(UUID.fromString(memberIdString));
-                if(!memberOptional.isEmpty())
+                if(memberOptional.isPresent())
                 {
                     member = memberOptional.get();
                 }
@@ -61,7 +61,6 @@ public class ExpenseService {
             if (adminByIdString.isEmpty()) {
                 throw new InvalidRequestStateException("Invalid Admin");
             }
-
 
             Optional<Admin> adminOptional = adminRepository.findById(UUID.fromString(adminByIdString));
 
@@ -91,15 +90,16 @@ public class ExpenseService {
                         double currentTotal = eachMem.getTotal();
 
                         eachMem.setMaranavari(currentMaranavari + defaultMaranavari);
-                        eachMem.setTotal(currentTotal + defaultMaranavari);
+                        // Total is calculated and set in the entity class itself.
+                        //eachMem.setTotal(currentTotal + defaultMaranavari);
                         memberRepository.save(eachMem);
 
-                        transactionLogService.addNewTransactionLog(new Timestamp(System.currentTimeMillis()), eachMem,
+                        transactionLogService.addNewTransactionLog(eachMem,
                                 addExpenseRequestModel.getAmount(), null, expense, TransactionType.MARANAVARI, eachMem.getTotal());
                     }
 
                 } else if(addExpenseRequestModel.getExpenseType().equals(ExpenseType.OTHERS)) {
-                    transactionLogService.addNewTransactionLog(new Timestamp(System.currentTimeMillis()), null,
+                    transactionLogService.addNewTransactionLog(null,
                             addExpenseRequestModel.getAmount(), null, expense, TransactionType.OTHERS, 0);
                 }
             }

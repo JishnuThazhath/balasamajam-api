@@ -118,4 +118,9 @@ public class Member
         byte [] comboBytes = combo.getBytes();
         setUuid(UUID.nameUUIDFromBytes(comboBytes));
     }
+
+    public double calculateTotal()
+    {
+        return masavari + maranavari;
+    }
 }

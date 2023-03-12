@@ -11,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, UUID>
 {
-    @Query("SELECT m from Member m WHERE LOWER(m.fullName) LIKE %?1%")
+    @Query("SELECT m from Member m WHERE LOWER(m.fullName) LIKE %?1% or LOWER(m.localizedFullName) LIKE %?1%")
     List<Member> findMembers(String searchKey);
 }

@@ -37,4 +37,11 @@ public class BalasamajamMemberController
     public ResponseEntity<ResponseBaseModel<List<MemberBasicModel>>> getAllMembers() {
         return ResponseEntity.ok(memberService.getAllMembers());
     }
+
+    @PostMapping("/addMasavari")
+    public ResponseEntity<ResponseBaseModel<AddMasavariResponseModel>> addMasavari(@RequestBody RequestBaseModel<AddMasavariRequestModel> addMasavariRequestModel)
+    {
+        System.out.println("Adding masavari " + addMasavariRequestModel.getData().getMasavariAmount() + " for " + addMasavariRequestModel.getData().getMemberId());
+        return ResponseEntity.ok(memberService.addMasavari(addMasavariRequestModel.getData()));
+    }
 }

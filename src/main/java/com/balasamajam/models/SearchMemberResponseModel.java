@@ -1,7 +1,11 @@
 package com.balasamajam.models;
 
+import java.util.UUID;
+
 public class SearchMemberResponseModel
 {
+    private UUID memberId;
+
     private String memberFullName;
 
     private String memberLocalName;
@@ -13,6 +17,14 @@ public class SearchMemberResponseModel
     private double total;
 
     private String phoneNumber;
+
+    public UUID getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(UUID memberId) {
+        this.memberId = memberId;
+    }
 
     public String getMemberFullName() {
         return memberFullName;

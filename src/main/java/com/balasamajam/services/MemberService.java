@@ -2,13 +2,18 @@ package com.balasamajam.services;
 
 import com.balasamajam.entities.Member;
 import com.balasamajam.models.*;
+import com.balasamajam.repositories.AdminRepository;
 import com.balasamajam.repositories.MemberRepository;
+import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MemberService
@@ -16,6 +21,14 @@ public class MemberService
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
+    private TransactionLogService transactionLogService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     public ResponseBaseModel<MemberResponseModel> addMember(MemberRequestModel memberRequestModel) {
         ResponseBaseModel<MemberResponseModel> memberResponseModel = new ResponseBaseModel<>();
@@ -74,6 +87,7 @@ public class MemberService
             for(Member member : members)
             {
                 SearchMemberResponseModel searchMemberResponseModel = new SearchMemberResponseModel();
+                searchMemberResponseModel.setMemberId(member.getUuid());
                 searchMemberResponseModel.setMemberFullName(member.getFullName());
                 searchMemberResponseModel.setMemberLocalName(member.getLocalizedFullName());
                 searchMemberResponseModel.setMaranavari(member.getMaranavari());
@@ -122,5 +136,49 @@ public class MemberService
         }
 
         return  memberBasicResponseModel;
+    }
+
+    @Transactional
+    public ResponseBaseModel<AddMasavariResponseModel> addMasavari(AddMasavariRequestModel request)
+    {
+        ResponseBaseModel<AddMasavariResponseModel> response = new ResponseBaseModel<>();
+        response.setStatus("OK");
+        response.setMessage("Successfully added Masavari");
+
+        try
+        {
+            if(request.getMemberId() == null)
+            {
+                throw new InvalidRequestStateException("Member id cannot be null");
+            }
+
+            Optional<Member> memberOptional = memberRepository.findById(UUID.fromString(request.getMemberId()));
+            if(memberOptional.isPresent())
+            {
+                Member member = memberOptional.get();
+                member.setMaranavari(request.getMaranavariAmount());
+                member.setMasavari(request.getMasavariAmount());
+                member.setTotal(member.calculateTotal());
+                memberRepository.save(member);
+
+                // Add payment
+                paymentService.addPayment(request.getPaidAmount(), member, request.getDate());
+
+                transactionLogService.addNewTransactionLog(member, request.getMasavariAmount(), null, null,
+                        TransactionType.MASAVARI, member.getTotal());
+
+                transactionLogService.addNewTransactionLog(member, request.getMaranavariAmount(), null, null,
+                        TransactionType.MARANAVARI, member.getTotal());
+            }
+
+            // Update the member table.
+            // Update the transaction-log table
+        } catch (Exception e)
+        {
+            response.setStatus("FAILED");
+            response.setMessage("Error while adding expense " + e.getMessage());
+        }
+
+        return response;
     }
 }

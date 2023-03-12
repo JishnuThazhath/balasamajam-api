@@ -17,11 +17,11 @@ public class TransactionLogService
     @Autowired
     private TransactionLogRepository transactionLogRepository;
 
-    public void addNewTransactionLog(Timestamp dateStamp, Member member, double amount, Payment paymentId, Expense expenseId, TransactionType transactionType, double newTotal)
+    public void addNewTransactionLog(Member member, double amount, Payment paymentId, Expense expenseId, TransactionType transactionType, double newTotal)
     {
         TransactionLog transactionLog = new TransactionLog();
 
-        transactionLog.setTransactionDate(dateStamp);
+        transactionLog.setTransactionDate((new Timestamp(System.currentTimeMillis())));
         transactionLog.setMemberId(member);
         transactionLog.setAmount(amount);
         transactionLog.setPaymentId(paymentId);

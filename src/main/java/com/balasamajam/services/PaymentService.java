@@ -12,6 +12,7 @@ import com.sun.jdi.request.InvalidRequestStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -34,6 +35,7 @@ public class PaymentService
     @Autowired
     private TransactionLogService transactionLogService;
 
+    @Transactional
     public ResponseBaseModel<AddPaymentResponseModel> addNewPayment(AddPaymentRequestModel addPaymentRequestModel)
     {
         ResponseBaseModel<AddPaymentResponseModel> addPaymentResponseModel = new ResponseBaseModel<>();
@@ -63,11 +65,7 @@ public class PaymentService
             Optional<Member> memberOptional = memberRepository.findById(UUID.fromString(memberIdString));
             Optional<Admin> adminOptional = adminRepository.findById(UUID.fromString(adminByIdString));
 
-            if(memberOptional.isEmpty() || adminOptional.isEmpty()) {
-                addPaymentResponseModel.setStatus("FAILED");
-                addPaymentResponseModel.setMessage("No such member or invalid admin");
-            }
-            else
+            if(memberOptional.isPresent() && adminOptional.isPresent())
             {
                 Member member = memberOptional.get();
                 Admin admin = adminOptional.get();
@@ -85,6 +83,10 @@ public class PaymentService
                 double payedAmount = addPaymentRequestModel.getAmount();
                 double currentMaranavari = member.getMaranavari();
                 double currentTotal = member.getTotal();
+
+                /*
+                 * The payment amount must be deducted from pending maranavari.
+                 * */
 
                 // Maranavari
                 if(payedAmount <= currentMaranavari)
@@ -112,7 +114,12 @@ public class PaymentService
                 member.setTotal(currentTotal - addPaymentRequestModel.getAmount());
 
                 memberRepository.save(member);
-                transactionLogService.addNewTransactionLog(currentTime, member, addPaymentRequestModel.getAmount(), payment, null, TransactionType.PAYMENT, member.getTotal());
+                transactionLogService.addNewTransactionLog(member, addPaymentRequestModel.getAmount(), payment, null, TransactionType.PAYMENT, member.getTotal());
+            }
+            else
+            {
+                addPaymentResponseModel.setStatus("FAILED");
+                addPaymentResponseModel.setMessage("No such member or invalid admin");
             }
         }
         catch (InvalidRequestStateException e) {
@@ -256,5 +263,16 @@ public class PaymentService
         }
 
         return paymentModels;
+    }
+
+    @Transactional
+    public void addPayment(double amount, Member member, Date date)
+    {
+        Payment payment = new Payment();
+        payment.setPaymentAmount(amount);
+        payment.setCollectedFrom(member);
+        payment.setPaymentDate(Timestamp.from(date.toInstant()));
+        paymentRepository.save(payment);
+        transactionLogService.addNewTransactionLog(member, amount, payment, null, TransactionType.PAYMENT, member.getTotal());
     }
 }
